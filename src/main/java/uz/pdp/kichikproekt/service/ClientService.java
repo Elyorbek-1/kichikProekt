@@ -14,6 +14,9 @@ public class ClientService {
     @Autowired
     ClientRepository clientRepository;
     public Result addClient(Client client){
+        boolean existsByPhoneNumber = clientRepository.existsByPhoneNumber(client.getPhoneNumber());
+        if (existsByPhoneNumber)
+            return new Result("Bunday raqamli client mavjud",false);
         clientRepository.save(client);
         return new Result("Bajarildi",true);
     }
@@ -25,6 +28,9 @@ public class ClientService {
         if (!optionalClient.isPresent()){
             return new Result("bunday id li malumot topilmadi",false);
         }
+        boolean existsByPhoneNumber = clientRepository.existsByPhoneNumber(client.getPhoneNumber());
+        if (existsByPhoneNumber)
+            return new Result("Bunday raqamli client mavjud",false);
         Client client1 = optionalClient.get();
         client1.setName(client.getName());
         client1.setPhoneNumber(client.getPhoneNumber());

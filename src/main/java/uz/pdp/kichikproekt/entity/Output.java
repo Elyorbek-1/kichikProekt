@@ -23,7 +23,7 @@ public class Output {
     private Currency currency;
     private Integer factureNumber;
     private Integer code;
-    @OneToOne
+    @ManyToOne
     private Client client;
 
 }

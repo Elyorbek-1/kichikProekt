@@ -15,44 +15,54 @@ public class CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
-    public Result addCategory(CategoryDto categoryDto){
+    public Result addCategory(CategoryDto categoryDto) {
         boolean existsByName = categoryRepository.existsByName(categoryDto.getName());
         if (existsByName)
-            return new Result("Bunday category mavjud",false);
-        Optional<Category> optionalCategory = categoryRepository.findById(categoryDto.getCategoryId());
-        Category category=new Category();
+            return new Result("Bunday category mavjud", false);
+        Category category = new Category();
         category.setName(categoryDto.getName());
-        category.setCategory(optionalCategory.get());
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryDto.getCategoryId());
+        if (categoryDto.getCategoryId() != null) {
+            if (!optionalCategory.isPresent())
+            return new Result("Bunday id li ota category mavjud emas",false);
+            else {
+                category.setCategory(optionalCategory.get());
+            }
+        }
         categoryRepository.save(category);
-        return new Result("Bajarildi",true);
+        return new Result("Bajarildi", true);
     }
 
-    public List<Category> getCategoryList(){
+    public List<Category> getCategoryList() {
         return categoryRepository.findAll();
     }
 
-    public Result editCategory(int id,CategoryDto categoryDto){
+    public Result editCategory(int id, CategoryDto categoryDto) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (!optionalCategory.isPresent())
-            return new Result("Bunday id li category mavjud emas",false);
+            return new Result("Bunday id li category mavjud emas", false);
         Optional<Category> optionalCategory1 = categoryRepository.findById(categoryDto.getCategoryId());
-        if (!optionalCategory1.isPresent())
-            return new Result("Bunday id li category mavjud emas",false);
+        boolean existsByName = categoryRepository.existsByName(categoryDto.getName());
+        if (existsByName)
+            return new Result("Bunday nomli category mavjud",false);
         Category category = optionalCategory.get();
         category.setName(categoryDto.getName());
-        category.setCategory(optionalCategory1.get());
+        if (categoryDto.getCategoryId()!=null){
+            if (!optionalCategory1.isPresent())
+                return new Result("Bunday id li ota category mavjud emas", false);
+            else
+                category.setCategory(optionalCategory1.get());
+        }
         categoryRepository.save(category);
-        return new Result("Bajarildi",true);
+        return new Result("Bajarildi", true);
     }
 
-    public Result deleteCategory(int id){
+    public Result deleteCategory(int id) {
         try {
             categoryRepository.deleteById(id);
-            return new Result("Bajarildi",true);
+            return new Result("Bajarildi", true);
         } catch (Exception e) {
-            return new Result("Bajarilmadi",false);
+            return new Result("Bajarilmadi", false);
         }
     }
-
-
 }
